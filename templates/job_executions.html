@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Execution History for Job #{{ job.id }}</h1>
+<p><strong>Command:</strong> {{ job.command }}</p>
+<a href="{{ url_for('index') }}" class="btn btn-secondary mb-3">Back to Jobs</a>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Execution Time</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for execution in executions %}
+        <tr>
+            <td>{{ execution.execution_time }}</td>
+            <td>{{ execution.status }}</td>
+            <td>
+                <a href="{{ url_for('view_log', execution_id=execution.id) }}" class="btn btn-sm btn-info" title="View Log">
+                    <i class="fas fa-file-alt"></i>
+                </a>
+                <a href="{{ url_for('download_log', execution_id=execution.id) }}" class="btn btn-sm btn-success" title="Download Log">
+                    <i class="fas fa-download"></i>
+                </a>
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="3">No executions recorded.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

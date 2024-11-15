@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Execution Log</h1>
+<p><strong>Job ID:</strong> {{ execution.job_id }}</p>
+<p><strong>Execution Time:</strong> {{ execution.execution_time }}</p>
+<p><strong>Status:</strong> {{ execution.status }}</p>
+<p><strong>Command:</strong> {{ execution.job.command }}</p>
+
+<h3>Standard Output:</h3>
+<pre>{{ execution.stdout }}</pre>
+
+<h3>Standard Error:</h3>
+<pre>{{ execution.stderr }}</pre>
+
+<a href="{{ url_for('job_executions', job_id=execution.job_id) }}" class="btn btn-secondary">Back to Execution History</a>
+<a href="{{ url_for('download_log', execution_id=execution.id) }}" class="btn btn-success">Download Log</a>
+{% endblock %}

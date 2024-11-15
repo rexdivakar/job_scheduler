@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Scheduled Jobs</h1>
+<a href="{{ url_for('add_job') }}" class="btn btn-primary mb-3">Add New Job</a>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Cron Expression</th>
+            <th>Command</th>
+            <th>Next Run Time</th>
+            <th>Status</th>
+            <th>Last Execution</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in job_statuses %}
+        {% set job = item.job %}
+        <tr>
+            <td>{{ job.id }}</td>
+            <td>{{ job.cron_expression }}</td>
+            <td>{{ job.command }}</td>
+            <td>{{ job.next_run_time }}</td>
+            <td>{{ job.status }}</td>
+            <td>
+                {% if item.last_status == 'Success' %}
+                <span class="text-success" title="Last execution succeeded">
+                    <i class="fas fa-check-circle"></i>
+                </span>
+                {% elif item.last_status == 'Failed' %}
+                <span class="text-danger" title="Last execution failed">
+                    <i class="fas fa-exclamation-circle"></i>
+                </span>
+                {% else %}
+                <span class="text-muted" title="Never executed">
+                    <i class="fas fa-minus-circle"></i>
+                </span>
+                {% endif %}
+            </td>
+            <td>
+                <!-- View Logs Button -->
+                <a href="{{ url_for('job_executions', job_id=job.id) }}" class="btn btn-sm btn-info" title="View Logs">
+                    <i class="fas fa-file-alt"></i>
+                </a>
+                <!-- Edit Job Button -->
+                <a href="{{ url_for('edit_job', job_id=job.id) }}" class="btn btn-sm btn-warning" title="Edit Job">
+                    <i class="fas fa-edit"></i>
+                </a>
+                <!-- Execute Now Button -->
+                <form action="{{ url_for('execute_now', job_id=job.id) }}" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-sm btn-success" title="Execute Now">
+                        <i class="fas fa-bolt"></i>
+                    </button>
+                </form>
+                <!-- Enable/Disable Button -->
+                <form action="{{ url_for('toggle_status', job_id=job.id) }}" method="post" style="display:inline;">
+                    {% if job.status == 'Active' %}
+                    <button type="submit" class="btn btn-sm btn-secondary" title="Disable Job">
+                        <i class="fas fa-stop"></i>
+                    </button>
+                    {% else %}
+                    <button type="submit" class="btn btn-sm btn-secondary" title="Enable Job">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    {% endif %}
+                </form>
+                <!-- Delete Job Button -->
+                <form action="{{ url_for('delete_job', job_id=job.id) }}" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?');" title="Delete Job">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </form>
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="7">No jobs scheduled.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
